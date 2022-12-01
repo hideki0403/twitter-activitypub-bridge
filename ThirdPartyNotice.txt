@@ -1,0 +1,17 @@
+NOTICES
+
+This repository includes several third-party Open-Source softwares.
+
+----------------------------------------------------------------------
+
+misskey@12.119.0 - AGPLv3
+https://github.com/misskey-dev/misskey
+
+LICENSE: https://github.com/misskey-dev/misskey/blob/develop/LICENSE
+
+From the OSS listed above, we using the files listed below.
+
+http-signature.d.ts
+https://github.com/misskey-dev/misskey/blob/12.119.0/packages/backend/src/@types/http-signature.d.ts
+
+----------------------------------------------------------------------
