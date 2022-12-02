@@ -1,4 +1,7 @@
 const fs = require('fs')
 const path = require('path')
+const target = path.resolve(__dirname, '../build')
 
-fs.rmdirSync(path.resolve(__dirname, '../build'), { recursive: true })
+if (fs.existsSync(target)) {
+    fs.rmSync(target, { recursive: true })
+}
