@@ -8,7 +8,7 @@
   },
   "private": true,
   "scripts": {
-    "start": "node ./build/src/index.js",
+    "start": "node ./build/index.js",
     "build": "npm run clean && tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
     "dev": "ts-node-dev -r tsconfig-paths/register --files src/index.ts",
     "clean": "node ./scripts/clean.js"
