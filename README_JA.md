@@ -28,7 +28,6 @@ FediverseとTwitterでは文化が全く異なりますし、このソフトウ�
 > - yarn (v1.x.x)
 > - Redis
 > - MongoDB
-> - ffmpeg
 
 1. このリポジトリをクローンし、ライブラリをインストールします。
     ```bash
