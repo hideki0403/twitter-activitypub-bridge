@@ -1,36 +1,48 @@
-## main settings
+# ---- Main settings ----
 name: Twitter ActivityPub Bridge
 domain: localhost
 port: 3000
 useQueueDashboard: false
 
-## mongodb
-db:
-  host: localhost
-  port: 27017
-  name: twitter-activitypub-bridge
-
-## redis
-redis:
-  host: localhost
-  port: 6379
-  # password: example
-  # db: 0
-
-## twitter
-twitter:
-  consumer_key:
-  consumer_secret:
-  access_token: 
-  access_token_secret:
-  # list_prefix: bridge-
-
-## maintainer
+# ---- Maintainer ----
+# The moderators of instances using some software will be able to see the name and email address of the maintainer of this instance.
+# Please enter as much as possible.
 maintainer:
   name: "" # your name
   email: "" # your email
 
-## ignore user/instance
+# ---- MongoDB ----
+db:
+  host: localhost
+  port: 27017
+
+  # Database name
+  name: twitter-activitypub-bridge
+
+# ---- Redis ----
+redis:
+  host: localhost
+  port: 6379
+  #password: example
+  #db: 0
+
+# ---- Twitter ----
+# Enter the consumer key and consumer secret obtained from the Twitter Developer Portal.
+# You can get the access token and access token secret from your main account,
+# but we recommend that you create a new account if possible, as they will be used to create and manage lists.
+twitter:
+  consumer_key: ""
+  consumer_secret: ""
+  access_token: ""
+  access_token_secret: ""
+
+  # You can specify a prefix to be used for the Twitter list.
+  #list_prefix: bridge-
+
+## ---- Ignore list ----
+# You can ignore (block) follow requests from instances or users in the below format: @<username>@<host>
+# The primary use is to block annoying instances or users such as follow bots that send a large number of requests.
+# Regular expressions are available, examples are as follows.
 ignoreList:
   - "@proxy@*" # Ignore certain users, regardless of instance
   - "@*@example.instance" # Ignore certain instance, regardless of user
