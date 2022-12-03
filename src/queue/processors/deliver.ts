@@ -10,7 +10,7 @@ const logger = utils.logger.getLogger('queue:deliver')
 export default async function(job: Bull.Job<Types.deliverQueue>) {
     const activity = JSON.stringify(job.data.activity)
     const signer = await activitypub.utils.getUserKeypair(job.data.actorId)
-    if (!signer) return log('fail: signer not found')
+    if (!signer) return log('failed: signer not found')
 
     const signedHeaders = createSignature(job.data.to, activity, signer.privateKey, job.data.actorId)
 
@@ -27,10 +27,10 @@ export default async function(job: Bull.Job<Types.deliverQueue>) {
     }
 
     if (response.status >= 500) {
-        throw log(`fail: remote server error (code: ${response.status}, to: ${job.data.to})`)
+        throw log(`failed: remote server error (code: ${response.status}, to: ${job.data.to})`)
     }
 
-    return log(`fail: client error (code: ${response.status}, to: ${job.data.to})`)
+    return log(`failed: client error (code: ${response.status}, to: ${job.data.to})`)
 }
 
 function createSignature(rawUrl: string, body: string, privateKey: string, actorId: string) {

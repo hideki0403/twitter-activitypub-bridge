@@ -10,23 +10,26 @@ const logger = utils.logger.getLogger('ap:inbox')
 
 export async function inbox(signature: httpSignature.IParsedSignature, activity: Types.IActivity) {
     const target = typeof activity.actor === 'string' ? activity.actor : activity.actor.id 
-    if (!target) return
+    if (!target) return logger.debug('interrupt: actor is not found')
 
     logger.trace(`Received activity: ${activity.type} from ${target}`)
 
     // リモートのユーザーを取得
     const remoteUser = await remote.getRemoteUser(target)
-    if (!remoteUser || !remoteUser.publicKey?.publicKeyPem) return
+    if (!remoteUser || !remoteUser.publicKey?.publicKeyPem) return logger.debug('interrupt: remote user is not found')
+
+    // ブロック対象のユーザー/インスタンスか検証
+    if (remote.isIgnoreUser(remoteUser)) return logger.debug('interrupt: remote user is ignored')
 
     // 署名チェック
     const isVaridatedSignature = httpSignature.verifySignature(signature, remoteUser.publicKey.publicKeyPem)
-    if (!isVaridatedSignature || target !== remoteUser.id) return logger.debug(`Invalid signature: ${target}`)
+    if (!isVaridatedSignature || target !== remoteUser.id) return logger.debug(`interrupt: invalid signature: ${target}`)
 
     // follow
     if (activity.type === 'Follow') {
         const user = await getTwitterUserFromID(activity)
         // アカウントが見つからなかった or 鍵垢なら何もせずにそのまま終了
-        if (!user || user.protected) return
+        if (!user || user.protected) return logger.debug('interrupt: twitter user is not found or protected')
 
         // フォロー
         const isSuccess = await twitter.followUser(remoteUser.id, user)
