@@ -27,5 +27,11 @@ twitter:
 
 ## maintainer
 maintainer:
-  name: # your name
-  email:  # your email
+  name: "" # your name
+  email: "" # your email
+
+## ignore user/instance
+ignoreList:
+  - "@proxy@*" # Ignore certain users, regardless of instance
+  - "@*@example.instance" # Ignore certain instance, regardless of user
+  - "@proxy@example.instance" # Ignore certain users of a particular instance

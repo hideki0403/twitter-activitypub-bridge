@@ -33,6 +33,9 @@ export type Config = {
         name: string;
         email: string;
     }
+
+    // IgnoreList
+    ignoreList: [] | string[];
 }
 
 export interface packageJson {

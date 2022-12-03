@@ -33,7 +33,8 @@ const fallBackConfig: Types.Config = {
     maintainer: {
         name: 'unknown',
         email: 'unknown@localhost'
-    }
+    },
+    ignoreList: []
 }
 const mergedConfig = deepmerge(fallBackConfig, config)
 

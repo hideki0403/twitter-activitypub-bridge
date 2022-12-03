@@ -1,5 +1,6 @@
 import db from '@/database'
 import * as resolver from './resolver'
+import * as ignore from './ignore'
 import * as DBTypes from '@/database/types'
 
 async function getRemoteUser(url: string, forceFetch = false) {
@@ -25,5 +26,6 @@ async function getRemoteUser(url: string, forceFetch = false) {
 }
 
 export default {
-    getRemoteUser
+    getRemoteUser,
+    isIgnoreUser: ignore.isIgnoreUser
 }
