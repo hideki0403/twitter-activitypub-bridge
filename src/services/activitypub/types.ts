@@ -10,6 +10,7 @@ export interface IObject {
     icon?: any
     image?: any
     object?: IObject | string
+    url?: string
 }
 
 export interface IActivity extends IObject {
