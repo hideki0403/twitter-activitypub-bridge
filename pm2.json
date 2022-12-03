@@ -1,0 +1,4 @@
+{
+    "name": "twitter-ap-bridge",
+    "script": "./build/index.js"
+}
