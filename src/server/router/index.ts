@@ -1,4 +1,3 @@
-import config from '@/config'
 import Router from '@koa/router'
 import * as wellKnown from './well-known'
 import * as users from './users'
@@ -6,16 +5,13 @@ import * as inbox from './inbox'
 import * as notes from './notes'
 import * as assets from './assets'
 
-function index(ctx: Router.RouterContext) {
-    return ctx.redirect(config.repositoryUrl)
-}
-
 type Routes = {
     [key: string]: (ctx: Router.RouterContext) => void
 }
 
 export const get = {
-    '/': index,
+    '/': assets.index,
+    '/robots.txt': assets.robots,
     '/favicon.ico': assets.favicon,
     '/.well-known/webfinger': wellKnown.webfinger,
     '/.well-known/host-meta': wellKnown.hostMeta,
