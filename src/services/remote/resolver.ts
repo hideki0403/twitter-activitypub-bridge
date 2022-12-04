@@ -9,13 +9,23 @@ export async function getRemoteUser(url: string) {
         headers: {
             'Accept': 'application/activity+json'
         }
+    }).catch(e => {
+        logger.error(e)
+        return null
     })
 
-    if (!response.ok) {
+    if (!response || !response.ok) {
         logger.error(`Failed to fetch remote user: ${url}`)
         return null
     }
 
+    const user = await response.json().catch(e => {
+        logger.error(`Failed to fetch remote user (invalid JSON): ${url}`)
+        return null
+    })
+
+    if (!user) return null
+
     logger.info(`Fetched remote user: ${url}`)
-    return await response.json() as Types.IActor
+    return user as Types.IActor
 }
