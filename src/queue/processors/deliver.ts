@@ -20,7 +20,12 @@ export default async function(job: Bull.Job<Types.deliverQueue>) {
             'Content-Type': 'application/activity+json'
         }, signedHeaders),
         body: activity
+    }).catch(e => {
+        log(`failed: network error: ${e}`)
+        return null
     })
+
+    if (!response) throw 'failed: network error'
 
     if (response.ok) {
         return log(`completed (to: ${job.data.to})`)
