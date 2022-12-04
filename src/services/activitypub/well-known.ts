@@ -3,7 +3,7 @@ import config from '@/config'
 import database from '@/database'
 
 export async function webfinger(userId: string) {
-    const user = await twitter.getUser(userId)
+    const user = await twitter.getUser(userId, 'screen_name', true)
     if (!user) return 
 
     return {

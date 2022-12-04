@@ -4,7 +4,7 @@ import Router from '@koa/router'
 
 export async function user(ctx: Router.RouterContext) {
     const uid = ctx.params.id
-    const user = await twitter.getUser(uid, 'uid')
+    const user = await twitter.getUser(uid, 'uid', true)
     if (!user) {
         ctx.status = 404
         return

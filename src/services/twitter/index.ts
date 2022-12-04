@@ -24,13 +24,13 @@ async function nameResolver(search: 'uid' | 'screen_name', key: string) {
     }
 }
 
-async function getUser(id: string, search = 'screen_name' as 'uid' | 'screen_name', forceFetch = false) {
+async function getUser(id: string, search = 'screen_name' as 'uid' | 'screen_name', updateExpiredCache = false) {
     // データベースからユーザーのキャッシュを取得
     const cachedUser = await db.getOne<DBTypes.ITwitterUser>('twitterUser', { [search]: id })
 
-    // キャッシュが存在し、かつキャッシュが有効な場合はキャッシュを返す
+    // キャッシュが存在し、かつキャッシュが有効な場合 or キャッシュを明示的に更新しない場合はキャッシュを返す
     const CACHE_LIMIT = 1000 * 60 * 60 * 24 // 1 day
-    if (cachedUser && (Date.now() - cachedUser.updatedAt) < CACHE_LIMIT && !forceFetch) {
+    if (cachedUser && ((Date.now() - cachedUser.updatedAt) < CACHE_LIMIT || !updateExpiredCache)) {
         return cachedUser.user
     }
 
