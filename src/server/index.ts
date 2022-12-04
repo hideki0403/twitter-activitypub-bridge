@@ -40,6 +40,26 @@ export default function() {
 
     // bull-board
     if (config.useQueueDashboard) {
+        // アクセス制限
+        app.use((ctx, next) => {
+            if (!ctx.url.startsWith('/queue')) return next()
+
+            const host = ctx.req.headers['host']
+            if (!host) {
+                ctx.status = 400
+                ctx.body = 'Bad Request'
+                return
+            }
+
+            if (!host.startsWith('localhost')) {
+                ctx.status = 403
+                ctx.body = 'Forbidden'
+                return
+            }
+
+            return next()
+        })
+
         const serverAdapter = new KoaAdapter()
         createBullBoard({
             queues: queues.map(q => new BullAdapter(q)),
