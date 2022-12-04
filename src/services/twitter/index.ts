@@ -127,7 +127,7 @@ async function replaceRawLinks(text: string | null | undefined, entities: UserEn
     }
 
     // IDの置換
-    text = await replaceAsync(text, /@(\d+)/g, async (match, id) => {
+    text = await replaceAsync(text, /@([0-9a-zA-Z_])/g, async (match, id) => {
         const user = await getUser(id, 'screen_name')
         if (!user) return match
 
