@@ -29,19 +29,28 @@ FediverseとTwitterでは文化が全く異なりますし、このソフトウ�
 > - Redis
 > - MongoDB
 
-1. このリポジトリをクローンし、ライブラリをインストールします。
-    ```bash
-    $ git clone https://github.com/hideki0403/twitter-activitypub-bridge.git
-    $ cd twitter-activitypub-bridge
-    $ yarn install
-    ```  
-2. リポジトリのルートディレクトリにある `config.example.yml` を `config.yml` としてコピーし、編集します。
-3. ビルドします。
-    ```bash
-    $ yarn build
-    ```
-4. ビルドが終われば完了です。以下のコマンドで起動できます。
-    ```bash
-    $ yarn start
-    ```
-5. 任意のインスタンスから `@twitter@<domain>` で検索し、[Twitterの公式アカウント](https://twitter.com/twitter)が表示できれば問題なくセットアップ出来ています。
+### 1. リポジトリをクローンする
+```bash
+$ git clone https://github.com/hideki0403/twitter-activitypub-bridge.git
+$ cd twitter-activitypub-bridge
+```  
+
+### 2. ライブラリをインストールする
+```bash
+$ yarn install
+```
+
+### 3. 設定を編集する
+ディレクトリのルートにある `config.example.yml` を `config.yml` としてコピーし、設定ファイル内にあるコメントに従って編集します。
+
+### 4. ビルドする
+```bash
+$ yarn build
+```
+
+### 5. 起動する
+ビルドが終わったら以下のコマンドで起動できます。
+```bash
+$ yarn start
+```
+任意のインスタンスから `@twitter@<domain>` で検索し、[Twitterの公式アカウント](https://twitter.com/twitter)が表示できれば問題なくセットアップ出来ています。
