@@ -3,7 +3,9 @@ import * as DBTypes from '@/database/types'
 import { TweetEntitiesV1, TweetV1, UserEntitiesV1 } from 'twitter-api-v2'
 import client from './client'
 import listManager from './lists'
+import idResolver from './resolver'
 import utils from '@/utils'
+import replaceAsync from 'string-replace-async'
 
 const list = listManager.instance
 const logger = utils.logger.getLogger('twitter')
@@ -104,7 +106,7 @@ async function insertTweet(tweet: TweetV1) {
     await db.upsertOne('twitterTweet', { id: tweet.id_str }, upsertObject)
 }
 
-function replaceRawLinks(text: string | null | undefined, entities: UserEntitiesV1 | TweetEntitiesV1 | undefined) {
+async function replaceRawLinks(text: string | null | undefined, entities: UserEntitiesV1 | TweetEntitiesV1 | undefined) {
     if (!text || !entities) return ''
 
     const targets = []
@@ -123,6 +125,17 @@ function replaceRawLinks(text: string | null | undefined, entities: UserEntities
     for (const target of targets) {
         text = text.replace(target.url, target.expanded_url)
     }
+
+    // IDの置換
+    text = await replaceAsync(text, /@(\d+)/g, async (match, id) => {
+        const user = await getUser(id, 'screen_name')
+        if (!user) return match
+
+        const displayId = idResolver(user.id_str)
+        if (!displayId) return match
+
+        return `@${displayId}`
+    })
 
     return text
 }
@@ -184,5 +197,6 @@ export default {
     followUser,
     unfollowUser,
     client,
-    list
+    list,
+    idResolver
 }

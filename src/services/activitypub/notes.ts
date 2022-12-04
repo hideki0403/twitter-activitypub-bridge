@@ -10,7 +10,7 @@ export async function note(note: TweetV1) {
 
     // 引用を含んでいた場合はquote用処理を行う
     const isQuote = note.is_quote_status
-    const cleanNote = processNote(note)
+    const cleanNote = await processNote(note)
 
     const user = note.user
 
@@ -71,8 +71,8 @@ export async function note(note: TweetV1) {
     return response
 }
 
-function processNote(note: TweetV1) {
-    const content = twitter.removeMediaLinks(twitter.replaceRawLinks(note.full_text, note.entities), note.entities).replace(/\n/g, '<br>').replace(/https?:\/\/twitter.com\/.*\/status\/[0-9]+/g, '').trim()
+async function processNote(note: TweetV1) {
+    const content = twitter.removeMediaLinks(await twitter.replaceRawLinks(note.full_text, note.entities), note.entities).replace(/\n/g, '<br>').replace(/https?:\/\/twitter.com\/.*\/status\/[0-9]+/g, '').trim()
     const quoteUrl = `${config.url}/notes/${note.quoted_status_id_str}`
     const contentWithQuote = `${content}<br>RE: ${quoteUrl}`
 

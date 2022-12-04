@@ -1,7 +1,7 @@
 import * as Twitter from 'twitter-api-v2'
 import * as ActivityPub from '@/services/activitypub/types'
 
-export type allowedTableName = 'followingList' | 'remoteUser' | 'twitterTweet' | 'twitterUser' | 'twitterUserKeypair' | 'userListLink' | 'listStates' | 'store'
+export type allowedTableName = 'followingList' | 'remoteUser' | 'twitterTweet' | 'twitterUser' | 'twitterUserKeypair' | 'userListLink' | 'listStates' | 'store' | 'twitterIdTable'
 
 export interface ITwitterUser {
     screen_name: string
@@ -25,6 +25,12 @@ export interface ITwitterUserKeypair {
     uid: string
     publicKey: string
     privateKey: string
+}
+
+export interface ITwitterIDTable {
+    uid: string
+    screen_name: string
+    updatedAt: number
 }
 
 export interface IRemoteUser {
