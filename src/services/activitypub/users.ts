@@ -26,7 +26,7 @@ export async function user(user: ITwitterUserProfile) {
         endpoints: {
             sharedInbox: `${config.url}/inbox`
         },
-        preferredUsername: twitter.idResolver(user.id_str),
+        preferredUsername: await twitter.idResolver(user.id_str),
         name: user.name,
         summary: await twitter.replaceRawLinks(user.description, user.entities),
         manuallyApprovesFollowers: user.protected,
