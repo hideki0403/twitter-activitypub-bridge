@@ -59,7 +59,7 @@ export default async function () {
     // ツイートを処理
     for (const tweet of tweets) {
         // データベースに登録
-        await twitter.insertTweet(tweet)
+        await twitter.insertTweet(tweet.id_str, tweet)
 
         // ツイートをオブジェクトに変換
         const note = !tweet.retweeted_status ? activityPub.deliver.create(await activityPub.notes.note(tweet)) : await activityPub.notes.renote(tweet)

@@ -44,20 +44,22 @@ async function getUser(id: string, search = 'screen_name' as 'uid' | 'screen_nam
         return null
     }) as DBTypes.ITwitterUserProfile | null
 
-    // ユーザーが見つからなければnullを返す
-    if (!user) return null
-
-    if (user.status) delete user.status
+    if (user?.status) delete user.status
 
     const upsertObject = {
-        screen_name: user.screen_name,
-        uid: user.id_str,
+        screen_name: user?.screen_name,
+        uid: user?.id_str,
         user: user,
         updatedAt: Date.now()
     } as DBTypes.ITwitterUser
 
-    // ユーザーが見つかった場合はキャッシュを更新
-    db.upsertOne('twitterUser', { uid: user.id_str }, upsertObject)
+    if (!user) upsertObject[search] = id
+
+    // キャッシュを更新
+    db.upsertOne('twitterUser', { [search]: id }, upsertObject)
+
+    // ユーザーが見つからなければnullを返す
+    if (!user) return null
 
     logger.info(`User ${user.screen_name} (${user.id_str}) is fetched from Twitter API.`)
 
@@ -83,11 +85,10 @@ async function getTweet(id: string, forceFetch = false) {
         return null
     })
 
-    // ツイートが見つからなければnullを返す
-    if (!tweet) return null
-
     // キャッシュ更新
-    insertTweet(tweet)
+    insertTweet(id, tweet)
+
+    if (!tweet) return null
 
     logger.info(`Tweet ${tweet.id_str} is fetched from Twitter API.`)
 
@@ -95,15 +96,15 @@ async function getTweet(id: string, forceFetch = false) {
     return tweet
 }
 
-async function insertTweet(tweet: TweetV1) {
+async function insertTweet(id: string, tweet: TweetV1 | null) {
     const upsertObject = {
-        id: tweet.id_str,
-        authorUid: tweet.user.id_str,
+        id,
+        authorUid: tweet?.user.id_str,
         tweet: tweet,
         updatedAt: Date.now()
     } as DBTypes.ITwitterTweet
 
-    await db.upsertOne('twitterTweet', { id: tweet.id_str }, upsertObject)
+    await db.upsertOne('twitterTweet', { id }, upsertObject)
 }
 
 async function replaceRawLinks(text: string | null | undefined, entities: UserEntitiesV1 | TweetEntitiesV1 | undefined) {

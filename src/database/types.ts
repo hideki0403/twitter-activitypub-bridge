@@ -4,8 +4,8 @@ import * as ActivityPub from '@/services/activitypub/types'
 export type allowedTableName = 'followingList' | 'remoteUser' | 'twitterTweet' | 'twitterUser' | 'twitterUserKeypair' | 'userListLink' | 'listStates' | 'store' | 'twitterIdTable'
 
 export interface ITwitterUser {
-    screen_name: string
-    uid: string
+    screen_name: string | null
+    uid: string | null
     updatedAt: number
     user: ITwitterUserProfile
 }
@@ -19,7 +19,7 @@ export interface ITwitterTweet {
     id: string,
     authorUid: string,
     updatedAt: number,
-    tweet: Twitter.TweetV1
+    tweet: Twitter.TweetV1 | null
 }
 export interface ITwitterUserKeypair {
     uid: string
