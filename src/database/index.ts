@@ -21,10 +21,15 @@ async function deleteOne(collection: Types.allowedTableName, key: Object): Promi
     await Instance.db.collection(collection).deleteOne(key)
 }
 
+async function deleteMany(collection: Types.allowedTableName, key: Object): Promise<void> {
+    await Instance.db.collection(collection).deleteMany(key)
+}
+
 export default {
     getOne,
     get,
     upsertOne,
     deleteOne,
+    deleteMany,
     manager: Instance
 }

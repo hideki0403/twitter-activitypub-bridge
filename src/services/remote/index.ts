@@ -2,6 +2,7 @@ import db from '@/database'
 import * as resolver from './resolver'
 import * as ignore from './ignore'
 import * as DBTypes from '@/database/types'
+import * as Types from '@/services/activitypub/types'
 import utils from '@/utils'
 
 const logger = utils.logger.getLogger('remote')
@@ -15,7 +16,9 @@ async function getRemoteUser(url: string, forceFetch = false) {
     }
 
     const user = await resolver.getRemoteUser(url)
-    if (!user) return null
+
+    // リモートからの解決に失敗してもキャッシュが残っていればキャッシュを返す (ユーザー削除時に使用するので)
+    if (!user) return cachedUser ? cachedUser.user : null
 
     // 正しいユーザーか検証
     if (!user.type || !['Person', 'Service'].includes(user.type)) {
@@ -44,7 +47,15 @@ async function getRemoteUser(url: string, forceFetch = false) {
     return user
 }
 
+async function deleteRemoteUser(id: string) {
+    await db.deleteOne('remoteUser', { id })
+    await db.deleteMany('followingList', { source: id })
+    
+    logger.debug(`Deleted remote user: ${id}`)
+}
+
 export default {
     getRemoteUser,
+    deleteRemoteUser,
     isIgnoreUser: ignore.isIgnoreUser
 }

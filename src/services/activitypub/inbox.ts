@@ -48,6 +48,11 @@ export async function inbox(signature: httpSignature.IParsedSignature, activity:
         // フォロー解除
         await twitter.unfollowUser(remoteUser.id, user)
     }
+
+    // delete
+    if (activity.type === 'Delete' && typeof activity.object === 'object' && activity.object.type === 'Person') {
+        await remote.deleteRemoteUser(remoteUser.id)
+    }
 }
 
 async function getTwitterUserFromID(activity: Types.IActivity) {
