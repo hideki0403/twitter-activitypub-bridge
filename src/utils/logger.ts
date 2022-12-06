@@ -11,7 +11,7 @@ log4js.configure({
         file: {
             type: 'file',
             filename: './logs/system.log',
-            pattern: '.yyyy-MM-dd',
+            pattern: 'yyyy-MM-dd',
             daysToKeep: 31,
             compress: true,
             keepFileExt: true,
