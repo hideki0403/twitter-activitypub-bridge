@@ -15,7 +15,7 @@ export async function getRemoteUser(url: string) {
     })
 
     if (!response || !response.ok) {
-        logger.error(`Failed to fetch remote user: ${url}`)
+        logger.debug(`Failed to fetch remote user: ${url}`)
         return null
     }
 
