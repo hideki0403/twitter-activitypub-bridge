@@ -3,6 +3,7 @@ import * as Types from '@/database/types'
 import utils from '@/utils'
 import twitter from '@/services/twitter'
 import config from '@/config'
+import tweetParser from 'twitter-text'
 
 export async function note(note: TweetV1) {
     // もし対象のツイートがリツイート or 中身が空だったら無視
@@ -36,11 +37,13 @@ export async function note(note: TweetV1) {
         cc: ['https://www.w3.org/ns/activitystreams#Public'], // localにしたいのでこっちにactivitystreams#Publicを持ってくる,
         inReplyTo: note.in_reply_to_status_id_str ? `${config.url}/notes/${note.in_reply_to_status_id_str}` : null,
         sensitive: !!note.possibly_sensitive,
+        tag: cleanNote.tags
     } as any
+
+    response._misskey_content = cleanNote.rawContent
 
     // 引用リツイート
     if (isQuote) {
-        response._misskey_content = cleanNote.content
         response._misskey_quote = cleanNote.quoteUrl
         response.quoteUrl = cleanNote.quoteUrl
     }
@@ -72,14 +75,55 @@ export async function note(note: TweetV1) {
 }
 
 async function processNote(note: TweetV1) {
-    const content = twitter.removeMediaLinks(await twitter.replaceRawLinks(note.full_text, note.entities), note.entities).replace(/\n/g, '<br>').replace(/https?:\/\/twitter.com\/.*\/status\/[0-9]+/g, '').trim()
+    const rawContent = twitter.removeMediaLinks(await twitter.replaceRawLinks(note.full_text, note.entities), note.entities).replace(/https?:\/\/twitter.com\/.*\/status\/[0-9]+/g, '').trim()
+    const tagged = taggedText(rawContent.replace(/\n/g, '<br>'))
+    const content = `${tagged.text}`
     const quoteUrl = `${config.url}/notes/${note.quoted_status_id_str}`
     const contentWithQuote = `${content}<br>RE: ${quoteUrl}`
 
     return {
-        content,
+        rawContent,
+        content: `<p>${content}</p>`,
+        contentWithQuote: `<p>${contentWithQuote}</p>`,
         quoteUrl,
-        contentWithQuote
+        tags: tagged.tags
+    }
+}
+
+function taggedText(text: string) {
+    const links = tweetParser.extractUrls(text)
+    const hashtags = tweetParser.extractHashtags(text)
+    const mentions = tweetParser.extractMentions(text)
+    const tags = [] as { [key: string]: string }[]
+
+    // URLをタグ化
+    links.forEach(link => {
+        text = text.replace(link, `<a href="${link}" rel="nofollow noopener noreferrer" target="_blank">${link}</a>`)
+    })
+
+    // ハッシュタグをタグ化
+    hashtags.forEach(hashtag => {
+        text = text.replace(`#${hashtag}`, `<a href="https://twitter.com/hashtag/${hashtag}">#${hashtag}</a>`)
+        tags.push({
+            type: 'Hashtag',
+            href: `https://twitter.com/hashtag/${hashtag}`,
+            name: `#${hashtag}`
+        })
+    })
+
+    // メンションをタグ化
+    mentions.forEach(mention => {
+        text = text.replace(`@${mention}`, `<a href="https://twitter.com/${mention}">@${mention}</a>`)
+        tags.push({
+            type: 'Mention',
+            href: `https://twitter.com/${mention}`,
+            name: `@${mention}`
+        })
+    })
+
+    return {
+        text,
+        tags
     }
 }
 
