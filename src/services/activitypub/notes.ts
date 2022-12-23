@@ -78,7 +78,7 @@ async function processNote(note: TweetV1) {
     const tagged = utils.text.entities2html(rawContent.replace(/\n/g, '<br>'))
     const content = `${tagged.text}`
     const quoteUrl = `${config.url}/notes/${note.quoted_status_id_str}`
-    const contentWithQuote = `${content}<br>RE: ${quoteUrl}`
+    const contentWithQuote = `${content}<br>RE: <a href="${quoteUrl}">${quoteUrl}</a>`
 
     return {
         rawContent,
