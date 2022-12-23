@@ -3,7 +3,6 @@ import * as Types from '@/database/types'
 import utils from '@/utils'
 import twitter from '@/services/twitter'
 import config from '@/config'
-import tweetParser from 'twitter-text'
 
 export async function note(note: TweetV1) {
     // もし対象のツイートがリツイート or 中身が空だったら無視
@@ -76,7 +75,7 @@ export async function note(note: TweetV1) {
 
 async function processNote(note: TweetV1) {
     const rawContent = twitter.removeMediaLinks(await twitter.replaceRawLinks(note.full_text, note.entities), note.entities).replace(/https?:\/\/twitter.com\/.*\/status\/[0-9]+/g, '').trim()
-    const tagged = taggedText(rawContent.replace(/\n/g, '<br>'))
+    const tagged = utils.text.entities2html(rawContent.replace(/\n/g, '<br>'))
     const content = `${tagged.text}`
     const quoteUrl = `${config.url}/notes/${note.quoted_status_id_str}`
     const contentWithQuote = `${content}<br>RE: ${quoteUrl}`
@@ -87,43 +86,6 @@ async function processNote(note: TweetV1) {
         contentWithQuote: `<p>${contentWithQuote}</p>`,
         quoteUrl,
         tags: tagged.tags
-    }
-}
-
-function taggedText(text: string) {
-    const links = tweetParser.extractUrls(text)
-    const hashtags = tweetParser.extractHashtags(text)
-    const mentions = tweetParser.extractMentions(text)
-    const tags = [] as { [key: string]: string }[]
-
-    // URLをタグ化
-    links.forEach(link => {
-        text = text.replace(link, `<a href="${link}" rel="nofollow noopener noreferrer" target="_blank">${link}</a>`)
-    })
-
-    // ハッシュタグをタグ化
-    hashtags.forEach(hashtag => {
-        text = text.replace(`#${hashtag}`, `<a href="https://twitter.com/hashtag/${hashtag}">#${hashtag}</a>`)
-        tags.push({
-            type: 'Hashtag',
-            href: `https://twitter.com/hashtag/${hashtag}`,
-            name: `#${hashtag}`
-        })
-    })
-
-    // メンションをタグ化
-    mentions.forEach(mention => {
-        text = text.replace(`@${mention}`, `<a href="https://twitter.com/${mention}">@${mention}</a>`)
-        tags.push({
-            type: 'Mention',
-            href: `https://twitter.com/${mention}`,
-            name: `@${mention}`
-        })
-    })
-
-    return {
-        text,
-        tags
     }
 }
 
