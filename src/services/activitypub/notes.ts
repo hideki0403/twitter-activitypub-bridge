@@ -3,6 +3,7 @@ import * as Types from '@/database/types'
 import utils from '@/utils'
 import twitter from '@/services/twitter'
 import config from '@/config'
+import parseTweet from 'twitter-text'
 
 export async function note(note: TweetV1) {
     // もし対象のツイートがリツイート or 中身が空だったら無視
@@ -74,7 +75,10 @@ export async function note(note: TweetV1) {
 }
 
 async function processNote(note: TweetV1) {
-    const rawContent = twitter.removeMediaLinks(await twitter.replaceRawLinks(note.full_text, note.entities), note.entities).replace(/https?:\/\/twitter.com\/.*\/status\/[0-9]+/g, '').trim()
+    const tweet = twitter.removeMediaLinks(await twitter.replaceRawLinks(note.full_text, note.entities), note.entities).trim()
+    const rawQuoteUrl = parseTweet.extractUrls(tweet).find(text => text.match(/https?:\/\/twitter.com\/.*\/status\/[0-9]+/g))
+
+    const rawContent = rawQuoteUrl ? tweet.replace(rawQuoteUrl, '') : tweet
     const tagged = utils.text.entities2html(rawContent.replace(/\n/g, '<br>'))
     const content = `${tagged.text}`
     const quoteUrl = `${config.url}/notes/${note.quoted_status_id_str}`
