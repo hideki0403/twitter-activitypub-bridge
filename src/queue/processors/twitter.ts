@@ -75,7 +75,7 @@ export default async function () {
         users?.forEach(async user => {
             // ユーザーを解決
             const remoteUser = await remote.getRemoteUser(user.source)
-            if (remoteUser) {
+            if (remoteUser && !remote.isIgnoreUser(remoteUser)) {
                 // ユーザーに配信
                 deliver(remoteUser, note, tweet.user.id_str)
             }
