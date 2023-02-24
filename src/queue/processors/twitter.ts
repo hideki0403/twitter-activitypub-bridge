@@ -7,6 +7,7 @@ import * as DBTypes from '@/database/types'
 import { queueDeliver as deliver } from '@/queue'
 import remote from '@/services/remote'
 import utils from '@/utils'
+import config from '@/config'
 
 const logger = utils.logger.getLogger('queue:twitter')
 const client = twitter.client
@@ -60,6 +61,9 @@ export default async function () {
     for (const tweet of tweets) {
         // データベースに登録
         await twitter.insertTweet(tweet.id_str, tweet)
+
+        // ツイートしたユーザーが公式アカウントかチェック
+        if (config.onlyVerifiedAccount && !tweet.user.verified) continue
 
         // ツイートをオブジェクトに変換
         const note = !tweet.retweeted_status ? activityPub.deliver.create(await activityPub.notes.note(tweet)) : await activityPub.notes.renote(tweet)
