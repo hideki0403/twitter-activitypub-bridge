@@ -5,6 +5,7 @@ import client from './client'
 import listManager from './lists'
 import idResolver from './resolver'
 import utils from '@/utils'
+import config from '@/config'
 import replaceAsync from 'string-replace-async'
 
 const list = listManager.instance
@@ -25,6 +26,12 @@ async function nameResolver(search: 'uid' | 'screen_name', key: string) {
 }
 
 async function getUser(id: string, search = 'screen_name' as 'uid' | 'screen_name', updateExpiredCache = false) {
+    const user = await getBaseUser(id, search, updateExpiredCache)
+    if (config.onlyVerifiedAccount && !user?.verified) return null
+    return user
+}
+
+async function getBaseUser(id: string, search: 'uid' | 'screen_name', updateExpiredCache: boolean) {
     // データベースからユーザーのキャッシュを取得
     const cachedUser = await db.getOne<DBTypes.ITwitterUser>('twitterUser', { [search]: id })
 

@@ -3,6 +3,7 @@ export type Config = {
     domain: string;
     port: number;
     useQueueDashboard: boolean;
+    onlyVerifiedAccount: boolean;
     
     // MongoDB
     db: {

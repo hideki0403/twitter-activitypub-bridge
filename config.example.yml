@@ -3,6 +3,7 @@ name: Twitter ActivityPub Bridge
 domain: localhost
 port: 3000
 useQueueDashboard: false
+onlyVerifiedAccount: true
 
 # ---- Maintainer ----
 # The moderators of instances using some software will be able to see the name and email address of the maintainer of this instance.

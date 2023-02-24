@@ -12,6 +12,7 @@ const fallBackConfig: Types.Config = {
     domain: 'localhost',
     port: 3000,
     useQueueDashboard: false,
+    onlyVerifiedAccount: true,
     db: {
         host: 'localhost',
         port: 27017,
