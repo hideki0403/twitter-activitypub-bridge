@@ -71,6 +71,6 @@ export async function deleteUser(ctx: Router.RouterContext) {
     // データベースのfollowingListから対象ユーザーに関するフォロー情報を削除する
     await database.deleteMany('followingList', { target: twitterUser.id_str })
 
-    ctx.body = `success to send delete activity to ${sharedInboxes.length} instance(s)`
+    ctx.body = `delete successful`
     return
 }
