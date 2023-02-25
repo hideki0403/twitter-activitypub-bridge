@@ -1,6 +1,6 @@
 {
   "name": "twitter-activitypub-bridge",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -42,6 +42,7 @@
     "koa-logger": "^3.2.1",
     "log4js": "^6.7.1",
     "mongodb": "^4.12.1",
+    "picocolors": "^1.0.0",
     "string-replace-async": "2",
     "twitter-api-v2": "^1.12.9",
     "twitter-text": "^3.1.0"
