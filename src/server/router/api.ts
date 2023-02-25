@@ -38,30 +38,27 @@ export async function deleteUser(ctx: Router.RouterContext) {
         target: twitterUser.id_str
     })
 
-    if (!users) {
-        ctx.body = 'this user had no followers'
-        return
-    }
+    if (users) {
+        const sharedInboxes: string[] = []
+        for (const user of users) {
+            const remoteUser = await database.getOne<DBTypes.IRemoteUser>('remoteUser', {
+                id: user.source
+            })
+            if (!remoteUser) continue
 
-    const sharedInboxes: string[] = []
-    for (const user of users) {
-        const remoteUser = await database.getOne<DBTypes.IRemoteUser>('remoteUser', {
-            id: user.source
+            const sharedInbox = remoteUser.user.sharedInbox ?? remoteUser.user.endpoints?.sharedInbox
+            if (!sharedInbox || sharedInboxes.includes(sharedInbox)) continue
+
+            sharedInboxes.push(sharedInbox)
+        }
+
+        // 全てのsharedInboxにdeleteアクティビティを送信する
+        sharedInboxes.forEach(async sharedInbox => {
+            const activity = activitypub.deliver.deletes(await activitypub.users.user(twitterUser))
+            const actor = { sharedInbox } as IActor
+            deliver(actor, activity, twitterUser.id_str)
         })
-        if (!remoteUser) continue
-
-        const sharedInbox = remoteUser.user.sharedInbox ?? remoteUser.user.endpoints?.sharedInbox
-        if (!sharedInbox || sharedInboxes.includes(sharedInbox)) continue
-
-        sharedInboxes.push(sharedInbox)
     }
-    
-    // 全てのsharedInboxにdeleteアクティビティを送信する
-    sharedInboxes.forEach(async sharedInbox => {
-        const activity = activitypub.deliver.deletes(await activitypub.users.user(twitterUser))
-        const actor = { sharedInbox } as IActor
-        deliver(actor, activity, twitterUser.id_str)
-    })
 
     // データベースに削除したことを記録する
     const upsertObject = {
