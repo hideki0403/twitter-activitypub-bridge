@@ -195,9 +195,15 @@ async function unfollowUser(remoteUser: string, targetUser: DBTypes.ITwitterUser
     logger.info(`Unfollowed ${targetUser.screen_name} by ${remoteUser}`)
 }
 
+async function isDeleted(uid: string) {
+    const user = await db.getOne<DBTypes.IDeletedTwitterUser>('deletedTwitterUser', { uid })
+    return !!user
+}
+
 export default {
     nameResolver,
     getUser,
+    getBaseUser,
     getTweet,
     insertTweet,
     replaceRawLinks,
@@ -206,5 +212,6 @@ export default {
     unfollowUser,
     client,
     list,
-    idResolver
+    idResolver,
+    isDeleted
 }

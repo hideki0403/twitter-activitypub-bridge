@@ -17,6 +17,13 @@ export async function user(ctx: Router.RouterContext) {
         return
     }
 
+    // 削除チェック
+    if (await twitter.isDeleted(user.id_str)) {
+        // もし削除されていた場合は410 Goneを返す
+        ctx.status = 410
+        return
+    }
+
     // acceptがtext/htmlならTwitterに転送
     if (ctx.accepts('text/html')) {
         return ctx.redirect(`https://twitter.com/${user.screen_name}`)

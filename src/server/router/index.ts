@@ -4,6 +4,7 @@ import * as users from './users'
 import * as inbox from './inbox'
 import * as notes from './notes'
 import * as assets from './assets'
+import * as api from './api'
 
 type Routes = {
     [key: string]: (ctx: Router.RouterContext) => void
@@ -21,6 +22,7 @@ export const get = {
     '/manifest.json': wellKnown.manifestJson,
     '/users/:id': users.user,
     '/notes/:id': notes.note,
+    '/api/delete/:id': api.deleteUser
 } as Routes
 
 export const post = {

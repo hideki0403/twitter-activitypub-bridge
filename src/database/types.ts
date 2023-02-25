@@ -1,13 +1,18 @@
 import * as Twitter from 'twitter-api-v2'
 import * as ActivityPub from '@/services/activitypub/types'
 
-export type allowedTableName = 'followingList' | 'remoteUser' | 'twitterTweet' | 'twitterUser' | 'twitterUserKeypair' | 'userListLink' | 'listStates' | 'store' | 'twitterIdTable'
+export type allowedTableName = 'followingList' | 'remoteUser' | 'twitterTweet' | 'twitterUser' | 'deletedTwitterUser' | 'twitterUserKeypair' | 'userListLink' | 'listStates' | 'store' | 'twitterIdTable'
 
 export interface ITwitterUser {
     screen_name: string | null
     uid: string | null
     updatedAt: number
     user: ITwitterUserProfile
+}
+
+export interface IDeletedTwitterUser {
+    uid: string,
+    updatedAt: number
 }
 
 export interface ITwitterUserProfile extends Twitter.UserV1 {

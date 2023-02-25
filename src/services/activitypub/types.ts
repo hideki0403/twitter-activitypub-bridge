@@ -26,6 +26,9 @@ export interface IActor extends IObject {
     inbox: string
     outbox: string
     sharedInbox?: string
+    endpoints?: {
+        sharedInbox?: string
+    }
     publicKey?: {
         id: string
         publicKeyPem: string
